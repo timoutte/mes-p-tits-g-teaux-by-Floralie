@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Mes p'tits gâteaux by Floralie</title>
+<style>
+:root{--bg:#f7f0e8;--card:#fff;--text:#2b211f;--accent:#8b5e52;--accent2:#ead8ce}
+*{box-sizing:border-box}body{margin:0;font-family:Arial,sans-serif;background:var(--bg);color:var(--text)}
+header{background:#211916;color:white;text-align:center;padding:55px 20px}
+header h1{font-size:42px;margin:0 0 12px}header p{font-size:19px;margin:0;color:#f3e6df}
+nav{position:sticky;top:0;background:white;padding:12px;text-align:center;box-shadow:0 2px 10px #0001;z-index:2}
+nav a{color:var(--text);text-decoration:none;margin:0 14px;font-weight:bold}
+main{max-width:1050px;margin:auto;padding:35px 18px}
+.card{background:var(--card);border-radius:24px;padding:30px;margin:25px 0;box-shadow:0 8px 30px #0000000d}
+h2{font-size:30px;margin-top:0}.intro{text-align:center;font-size:18px;line-height:1.6}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:18px}
+.product{border:1px solid #eadfd9;border-radius:18px;overflow:hidden;background:white}
+.product img{width:100%;height:180px;object-fit:cover;background:#eee}
+.product .body{padding:17px}.product h3{margin:0 0 7px}.price{font-weight:bold;color:var(--accent);font-size:20px}
+.contact{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:15px}
+.contact a{color:var(--accent);text-decoration:none}
+footer{text-align:center;padding:30px;background:#211916;color:white;margin-top:40px}
+#editor{display:none}.edit-grid{display:grid;gap:12px}.edit-grid input,.edit-grid textarea{width:100%;padding:12px;border:1px solid #ccc;border-radius:10px;font-size:16px}
+button{border:0;border-radius:12px;padding:12px 18px;background:var(--accent);color:white;font-weight:bold;cursor:pointer;margin:5px 4px 0 0}
+.small{font-size:13px;color:#766b67}
+</style>
+</head>
+<body>
+<header>
+  <h1 id="siteName">Mes p'tits gâteaux by Floralie</h1>
+  <p id="siteSlogan">Des douceurs faites avec passion</p>
+</header>
+<nav><a href="#patisseries">Pâtisseries</a><a href="#apropos">À propos</a><a href="#contact">Contact</a><a href="#editor">Modifier</a></nav>
+<main>
+<section class="card intro" id="apropos">
+  <h2>Bienvenue 🍰</h2>
+  <p>Découvrez les créations de <strong id="name2">Mes p'tits gâteaux by Floralie</strong>, réalisées avec passion.</p>
+</section>
+
+<section class="card" id="patisseries">
+<h2>Pâtisseries</h2>
+<div class="grid" id="products"></div>
+<p class="small">Les produits, photos et prix peuvent être modifiés dans la rubrique « Modifier ».</p>
+</section>
+
+<section class="card" id="contact">
+<h2>Contact</h2>
+<div class="contact">
+  <div><strong>📞 Téléphone</strong><br><a id="phoneLink" href="tel:0629891316">06.29.89.13.16</a></div>
+  <div><strong>✉️ Email</strong><br><a id="emailLink" href="mailto:mesptitsgateauxbyfloralie@outlook.fr">mesptitsgateauxbyfloralie@outlook.fr</a></div>
+  <div><strong>📍 Adresse</strong><br><span id="address">265 Grande Rue, 76110 Benarville</span></div>
+</div>
+</section>
+
+<section class="card" id="editor">
+<h2>Modifier le site</h2>
+<div class="edit-grid">
+<label>Nom de la pâtisserie<input id="eName"></label>
+<label>Slogan<input id="eSlogan"></label>
+<label>Téléphone<input id="ePhone"></label>
+<label>Email<input id="eEmail"></label>
+<label>Ville / adresse<input id="eAddress"></label>
+</div>
+<h3>Produits</h3>
+<div id="editorProducts"></div>
+<button onclick="addProduct()">+ Ajouter une pâtisserie</button>
+<br>
+<button onclick="saveSite()">💾 Enregistrer les modifications</button>
+<button onclick="resetSite()">↩️ Réinitialiser</button>
+<p class="small">Les modifications sont enregistrées dans ce navigateur. Pour modifier le site publié pour tout le monde, il faudra remplacer le fichier sur l'hébergement.</p>
+</section>
+</main>
+<footer>© <span id="year"></span> <span id="footerName">Mes p'tits gâteaux by Floralie</span></footer>
+
+<script>
+const defaultData={
+name:"Mes p'tits gâteaux by Floralie",
+slogan:"Des douceurs faites avec passion",
+phone:"06.29.89.13.16",
+email:"mesptitsgateauxbyfloralie@outlook.fr",
+address:"265 Grande Rue, 76110 Benarville",
+products:[
+{name:"Gâteau personnalisé",price:"Sur demande",image:""},
+{name:"Tarte gourmande",price:"Sur demande",image:""},
+{name:"Petits gâteaux",price:"Sur demande",image:""}
+]};
+let data=JSON.parse(localStorage.getItem("patisserieData")||"null")||defaultData;
+
+function render(){
+document.getElementById("siteName").textContent=data.name;
+document.getElementById("name2").textContent=data.name;
+document.getElementById("footerName").textContent=data.name;
+document.getElementById("siteSlogan").textContent=data.slogan;
+document.getElementById("phoneLink").textContent=data.phone;
+document.getElementById("phoneLink").href="tel:"+data.phone.replace(/\D/g,"");
+document.getElementById("emailLink").textContent=data.email;
+document.getElementById("emailLink").href="mailto:"+data.email;
+document.getElementById("address").textContent=data.address;
+document.getElementById("year").textContent=new Date().getFullYear();
+document.getElementById("products").innerHTML=data.products.map(p=>`
+<div class="product">${p.image?`<img src="${p.image}" alt="">`:`<div style="height:180px;display:flex;align-items:center;justify-content:center;font-size:55px;background:#f1e6df">🍰</div>`}
+<div class="body"><h3>${escapeHtml(p.name)}</h3><div class="price">${escapeHtml(p.price)}</div></div></div>`).join("");
+document.getElementById("eName").value=data.name;
+document.getElementById("eSlogan").value=data.slogan;
+document.getElementById("ePhone").value=data.phone;
+document.getElementById("eEmail").value=data.email;
+document.getElementById("eAddress").value=data.address;
+renderEditorProducts();
+}
+function renderEditorProducts(){
+document.getElementById("editorProducts").innerHTML=data.products.map((p,i)=>`
+<div style="border:1px solid #ddd;padding:12px;border-radius:12px;margin:10px 0">
+<input style="width:100%;padding:10px;margin-bottom:7px" value="${escapeAttr(p.name)}" oninput="data.products[${i}].name=this.value">
+<input style="width:100%;padding:10px;margin-bottom:7px" value="${escapeAttr(p.price)}" oninput="data.products[${i}].price=this.value">
+<input style="width:100%;padding:10px;margin-bottom:7px" placeholder="URL de l'image (optionnel)" value="${escapeAttr(p.image||"")}" oninput="data.products[${i}].image=this.value">
+<button onclick="data.products.splice(${i},1);render()">Supprimer</button>
+</div>`).join("");
+}
+function addProduct(){data.products.push({name:"Nouvelle pâtisserie",price:"Sur demande",image:""});render();}
+function saveSite(){
+data.name=document.getElementById("eName").value;
+data.slogan=document.getElementById("eSlogan").value;
+data.phone=document.getElementById("ePhone").value;
+data.email=document.getElementById("eEmail").value;
+data.address=document.getElementById("eAddress").value;
+localStorage.setItem("patisserieData",JSON.stringify(data));render();alert("Modifications enregistrées !");
+}
+function resetSite(){if(confirm("Réinitialiser ?")){localStorage.removeItem("patisserieData");data=defaultData;render();}}
+function escapeHtml(s){return String(s).replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]))}
+function escapeAttr(s){return escapeHtml(s)}
+render();
+</script>
+</body>
+</html>
